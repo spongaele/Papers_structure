@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LitReview — Collaborative Literature Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #111318;
+    --bg2:       #191c24;
+    --bg3:       #21252f;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.13);
+    --text:      #e8e2d6;
+    --text-muted:#8a8070;
+    --accent:    #c89b50;
+    --accent2:   #e4b96a;
+    --danger:    #c05050;
+    --success:   #5a9e6f;
+    --info:      #5a8ec0;
+    --radius:    10px;
+    --radius-lg: 16px;
+    --shadow:    0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-size: 200px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(17,19,24,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .brand-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .brand h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .brand span {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* ── BUTTONS ── */
+  button { cursor: pointer; font-family: inherit; border: none; outline: none; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #1a1208;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(192,80,80,0.3);
+  }
+  .btn-danger:hover { background: rgba(192,80,80,0.12); }
+
+  .btn-icon {
+    padding: 7px;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+    line-height: 1;
+    font-size: 0.9rem;
+  }
+  .btn-icon:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+
+  .btn-sm { padding: 5px 11px; font-size: 0.8rem; }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    position: relative; z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* ── SETUP SCREEN ── */
+  #setup-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 64px);
+    padding: 2rem;
+  }
+
+  .setup-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: var(--shadow);
+  }
+
+  .setup-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .setup-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .setup-steps {
+    display: flex; flex-direction: column; gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-hint {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .step-hint strong { color: var(--accent); }
+  .step-hint code { font-family: 'JetBrains Mono', monospace; background: rgba(200,155,80,0.1); padding: 1px 5px; border-radius: 3px; font-size: 0.78rem; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 1; min-width: 220px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 9px 14px 9px 38px;
+    color: var(--text);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.88rem;
+    transition: border-color 0.15s;
+  }
+  .search-box input:focus { outline: none; border-color: var(--accent); }
+
+  .search-icon {
+    position: absolute; left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 0.85rem;
+  }
+
+  .filter-select {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 9px 32px 9px 12px;
+    color: var(--text);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.88rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%238a8070' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+  }
+  .filter-select:focus { outline: none; border-color: var(--accent); }
+
+  .stats-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .stats-bar strong { color: var(--accent); }
+
+  /* ── SYNC STATUS ── */
+  .sync-status {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.78rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .sync-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+  .sync-dot.ok { background: var(--success); }
+  .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
+  .sync-dot.error { background: var(--danger); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ── TABLE ── */
+  .table-wrapper {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  th {
+    padding: 13px 16px;
+    text-align: left;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  th:hover { color: var(--text); }
+  th .sort-icon { margin-left: 4px; opacity: 0.5; }
+  th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
+
+  td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    font-size: 0.88rem;
+  }
+
+  .td-title {
+    max-width: 280px;
+  }
+
+  .paper-title {
+    font-weight: 600;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .paper-venue {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .td-authors {
+    max-width: 200px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .td-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .type-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(200,155,80,0.12);
+    color: var(--accent);
+    border: 1px solid rgba(200,155,80,0.25);
+    white-space: nowrap;
+  }
+
+  .td-actions {
+    white-space: nowrap;
+  }
+
+  .action-row {
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* PDF icon button */
+  .btn-pdf {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: rgba(192,80,80,0.15);
+    color: #e07070;
+    border: 1px solid rgba(192,80,80,0.25);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .btn-pdf:hover { background: rgba(192,80,80,0.28); }
+  .btn-pdf.disabled { opacity: 0.2; pointer-events: none; }
+
+  .btn-doi {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: rgba(90,142,192,0.15);
+    color: #7ab4e0;
+    border: 1px solid rgba(90,142,192,0.25);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .btn-doi:hover { background: rgba(90,142,192,0.28); }
+  .btn-doi.disabled { opacity: 0.2; pointer-events: none; }
+
+  .btn-bib {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: rgba(90,158,111,0.15);
+    color: #80c898;
+    border: 1px solid rgba(90,158,111,0.25);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .btn-bib:hover { background: rgba(90,158,111,0.28); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+  .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .empty-state p { color: var(--text-muted); font-size: 0.9rem; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    margin: auto;
+    animation: slideUp 0.2s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+  }
+
+  .modal-body { padding: 1.75rem; }
+
+  .modal-footer {
+    display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    padding: 1rem 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── FORM ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  label .req { color: var(--accent); margin-left: 2px; }
+
+  input, select, textarea {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 9px 13px;
+    color: var(--text);
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.88rem;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(200,155,80,0.12);
+  }
+  input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  select option { background: var(--bg3); }
+
+  .cite-key-preview {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    background: rgba(200,155,80,0.08);
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin-top: 3px;
+    display: inline-block;
+  }
+
+  /* ── BIBTEX MODAL ── */
+  .bibtex-output {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    color: #a8d8a8;
+    white-space: pre;
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .bibtex-key { color: var(--accent); }
+  .bibtex-field { color: #7ab4e0; }
+  .bibtex-value { color: #a8d8a8; }
+
+  /* ── SETTINGS PANEL ── */
+  .settings-section { margin-bottom: 1.5rem; }
+  .settings-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent);
+  }
+
+  /* ── TOAST ── */
+  #toast-container {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    z-index: 9999;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .toast {
+    padding: 12px 18px;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    color: #fff;
+    display: flex; align-items: center; gap: 8px;
+    animation: toastIn 0.2s ease;
+    max-width: 320px;
+    backdrop-filter: blur(8px);
+  }
+
+  .toast.success { background: rgba(90,158,111,0.9); border: 1px solid rgba(90,158,111,0.5); }
+  .toast.error   { background: rgba(192,80,80,0.9);  border: 1px solid rgba(192,80,80,0.5); }
+  .toast.info    { background: rgba(90,142,192,0.9); border: 1px solid rgba(90,142,192,0.5); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── MISC ── */
+  .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text-muted);
+    margin: 2px;
+  }
+
+  .access-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .td-authors, .access-date-col { display: none; }
+    header { padding: 0 1rem; }
+    main { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <div class="brand-icon">📚</div>
+    <div>
+      <h1>LitReview</h1>
+      <span>Collaborative Literature Manager</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="sync-status" id="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">Not connected</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="export-bib-btn" style="display:none" onclick="exportAllBib()">⬇ Export .bib</button>
+    <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Settings</button>
+  </div>
+</header>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen">
+  <div class="setup-card">
+    <h2>Connect to GitHub</h2>
+    <p>LitReview stores your papers in a JSON file inside a GitHub repository, enabling real-time collaboration with your colleagues.</p>
+
+    <div class="setup-steps">
+      <div class="step-hint">
+        <strong>Step 1 — Create a GitHub repo</strong><br>
+        Create a new repo (e.g. <code>my-literature-review</code>) on GitHub. It can be private.<br>
+        Add a file called <code>papers.json</code> with content <code>[]</code>.
+      </div>
+      <div class="step-hint">
+        <strong>Step 2 — Generate a Personal Access Token</strong><br>
+        GitHub → Settings → Developer settings → Fine-grained tokens.<br>
+        Grant <code>Contents: Read and Write</code> on your repo.
+      </div>
+      <div class="step-hint">
+        <strong>Step 3 — Share this HTML file</strong><br>
+        Deploy to GitHub Pages (Settings → Pages → from branch <code>main</code>) and share the URL with your collaborator. You can both use the same token or each generate their own.
+      </div>
+    </div>
+
+    <div class="form-grid" style="margin-bottom:1rem">
+      <div class="form-group">
+        <label>GitHub Owner <span class="req">*</span></label>
+        <input type="text" id="setup-owner" placeholder="your-username"/>
+      </div>
+      <div class="form-group">
+        <label>Repository Name <span class="req">*</span></label>
+        <input type="text" id="setup-repo" placeholder="literature-review"/>
+      </div>
+      <div class="form-group">
+        <label>Branch</label>
+        <input type="text" id="setup-branch" placeholder="main" value="main"/>
+      </div>
+      <div class="form-group">
+        <label>File path</label>
+        <input type="text" id="setup-filepath" placeholder="papers.json" value="papers.json"/>
+      </div>
+      <div class="form-group full">
+        <label>Personal Access Token <span class="req">*</span></label>
+        <input type="password" id="setup-token" placeholder="github_pat_…"/>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%" onclick="connectGitHub()">Connect & Load Papers →</button>
+    <div style="margin-top:1rem; text-align:center">
+      <button class="btn btn-ghost btn-sm" onclick="useLocalMode()">or use Local Mode (no GitHub)</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP (hidden until connected) -->
+<main id="app-main" style="display:none">
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search by title, author, keyword…" oninput="renderTable()"/>
+    </div>
+    <select class="filter-select" id="type-filter" onchange="renderTable()">
+      <option value="">All types</option>
+      <option value="article">article</option>
+      <option value="inproceedings">inproceedings</option>
+      <option value="book">book</option>
+      <option value="incollection">incollection</option>
+      <option value="phdthesis">phdthesis</option>
+      <option value="techreport">techreport</option>
+      <option value="misc">misc</option>
+    </select>
+    <select class="filter-select" id="year-filter" onchange="renderTable()">
+      <option value="">All years</option>
+    </select>
+    <div class="stats-bar">
+      <strong id="paper-count">0</strong> papers
+    </div>
+    <button class="btn btn-primary" onclick="openAddPaper()">+ Add Paper</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy('title')">Title / Venue <span class="sort-icon">↕</span></th>
+          <th onclick="sortBy('authors')" class="td-authors">Authors <span class="sort-icon">↕</span></th>
+          <th onclick="sortBy('year')">Year <span class="sort-icon">↕</span></th>
+          <th onclick="sortBy('type')">Type <span class="sort-icon">↕</span></th>
+          <th>Links</th>
+          <th onclick="sortBy('accessed')">Accessed <span class="sort-icon">↕</span></th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="papers-tbody"></tbody>
+    </table>
+    <div id="empty-state" class="empty-state" style="display:none">
+      <div class="empty-icon">📄</div>
+      <h3>No papers yet</h3>
+      <p>Click "Add Paper" to start building your literature review.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  MODALS                                    -->
+<!-- ══════════════════════════════════════════ -->
+
+<!-- ADD / EDIT PAPER MODAL -->
+<div class="modal-overlay" id="paper-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="paper-modal-title">Add Paper</h2>
+      <button class="btn-icon" onclick="closeModal('paper-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <!-- Row 1 -->
+        <div class="form-group full">
+          <label>Title <span class="req">*</span></label>
+          <input type="text" id="f-title" placeholder="Full paper title" oninput="updateCiteKey()"/>
+        </div>
+        <!-- Row 2 -->
+        <div class="form-group full">
+          <label>Authors <span class="req">*</span> <small style="font-weight:300;text-transform:none;letter-spacing:0">(Last, First and Last, First…)</small></label>
+          <input type="text" id="f-authors" placeholder="Smith, John and Doe, Jane" oninput="updateCiteKey()"/>
+        </div>
+        <!-- Row 3 -->
+        <div class="form-group">
+          <label>Year <span class="req">*</span></label>
+          <input type="number" id="f-year" placeholder="2024" min="1900" max="2099" oninput="updateCiteKey()"/>
+        </div>
+        <div class="form-group">
+          <label>Type <span class="req">*</span></label>
+          <select id="f-type" onchange="toggleFields()">
+            <option value="article">article</option>
+            <option value="inproceedings">inproceedings</option>
+            <option value="book">book</option>
+            <option value="incollection">incollection</option>
+            <option value="phdthesis">phdthesis</option>
+            <option value="techreport">techreport</option>
+            <option value="misc">misc</option>
+          </select>
+        </div>
+        <!-- Row 4 -->
+        <div class="form-group" id="journal-group">
+          <label id="journal-label">Journal / Booktitle</label>
+          <input type="text" id="f-journal" placeholder="Nature, Proceedings of…"/>
+        </div>
+        <div class="form-group">
+          <label>Publisher / Institution</label>
+          <input type="text" id="f-publisher" placeholder="Springer, MIT…"/>
+        </div>
+        <!-- Row 5 -->
+        <div class="form-group">
+          <label>Volume</label>
+          <input type="text" id="f-volume" placeholder="12"/>
+        </div>
+        <div class="form-group">
+          <label>Number / Issue</label>
+          <input type="text" id="f-number" placeholder="3"/>
+        </div>
+        <!-- Row 6 -->
+        <div class="form-group">
+          <label>Pages</label>
+          <input type="text" id="f-pages" placeholder="123--145"/>
+        </div>
+        <div class="form-group">
+          <label>DOI</label>
+          <input type="text" id="f-doi" placeholder="10.1000/xyz123"/>
+        </div>
+        <!-- Row 7 -->
+        <div class="form-group full">
+          <label>PDF URL</label>
+          <input type="url" id="f-pdf" placeholder="https://arxiv.org/pdf/…"/>
+        </div>
+        <div class="form-group full">
+          <label>External URL (paper page)</label>
+          <input type="url" id="f-url" placeholder="https://arxiv.org/abs/…"/>
+        </div>
+        <!-- Row 8 -->
+        <div class="form-group">
+          <label>Date accessed</label>
+          <input type="date" id="f-accessed"/>
+        </div>
+        <div class="form-group">
+          <label>Cite key (auto)</label>
+          <input type="text" id="f-citekey" placeholder="smith2024title" style="font-family:'JetBrains Mono',monospace; font-size:0.8rem"/>
+        </div>
+        <!-- Keywords -->
+        <div class="form-group full">
+          <label>Keywords <small style="font-weight:300;text-transform:none;letter-spacing:0">(comma-separated)</small></label>
+          <input type="text" id="f-keywords" placeholder="machine learning, NLP, transformers"/>
+        </div>
+        <!-- Abstract -->
+        <div class="form-group full">
+          <label>Abstract</label>
+          <textarea id="f-abstract" placeholder="Paste the abstract here…" rows="4"></textarea>
+        </div>
+        <!-- Notes -->
+        <div class="form-group full">
+          <label>Personal Notes</label>
+          <textarea id="f-notes" placeholder="Your annotations, relevance to your work…" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('paper-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePaper()">Save Paper</button>
+    </div>
+  </div>
+</div>
+
+<!-- BIBTEX MODAL -->
+<div class="modal-overlay" id="bibtex-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <h2>BibTeX Entry</h2>
+      <button class="btn-icon" onclick="closeModal('bibtex-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <pre class="bibtex-output" id="bibtex-content"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="copyBibtex()">📋 Copy to clipboard</button>
+      <button class="btn btn-ghost" onclick="closeModal('bibtex-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2>Settings</h2>
+      <button class="btn-icon" onclick="closeModal('settings-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-section">
+        <h3>GitHub Connection</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Owner</label>
+            <input type="text" id="s-owner"/>
+          </div>
+          <div class="form-group">
+            <label>Repository</label>
+            <input type="text" id="s-repo"/>
+          </div>
+          <div class="form-group">
+            <label>Branch</label>
+            <input type="text" id="s-branch"/>
+          </div>
+          <div class="form-group">
+            <label>File path</label>
+            <input type="text" id="s-filepath"/>
+          </div>
+          <div class="form-group full">
+            <label>Personal Access Token</label>
+            <input type="password" id="s-token"/>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Danger Zone</h3>
+        <button class="btn btn-danger btn-sm" onclick="clearAllLocal()">🗑 Clear local cache</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('settings-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save & Reconnect</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  JAVASCRIPT                                -->
+<!-- ══════════════════════════════════════════ -->
+<script>
+/* ── STATE ── */
+let papers = [];
+let editingId = null;
+let sortField = 'year';
+let sortDir = -1; // -1 = desc
+let currentBibtex = '';
+let githubConfig = {};
+let fileSha = null; // needed for GitHub API PUT
+let localMode = false;
+
+/* ── LOAD CONFIG FROM LOCALSTORAGE ── */
+function loadConfig() {
+  const c = localStorage.getItem('litreview_config');
+  if (c) githubConfig = JSON.parse(c);
+}
+
+function saveConfig(cfg) {
+  githubConfig = cfg;
+  localStorage.setItem('litreview_config', JSON.stringify(cfg));
+}
+
+/* ── GITHUB API ── */
+async function ghFetch(path, method = 'GET', body = null) {
+  const url = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/${githubConfig.filepath}`;
+  const opts = {
+    method,
+    headers: {
+      'Authorization': `Bearer ${githubConfig.token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || `GitHub API error ${res.status}`);
+  }
+  return res.json();
+}
+
+async function loadFromGitHub() {
+  setSyncStatus('syncing', 'Loading…');
+  try {
+    const data = await ghFetch();
+    fileSha = data.sha;
+    const content = atob(data.content.replace(/\n/g, ''));
+    papers = JSON.parse(content);
+    setSyncStatus('ok', 'Synced');
+    return true;
+  } catch(e) {
+    setSyncStatus('error', 'Error: ' + e.message);
+    toast('Error loading from GitHub: ' + e.message, 'error');
+    return false;
+  }
+}
+
+async function saveToGitHub() {
+  if (localMode) { saveLocal(); return; }
+  setSyncStatus('syncing', 'Saving…');
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(papers, null, 2))));
+    const body = {
+      message: `Update papers.json [LitReview]`,
+      content,
+      sha: fileSha
+    };
+    const res = await ghFetch('', 'PUT', body);
+    fileSha = res.content.sha;
+    setSyncStatus('ok', 'Saved ✓');
+    toast('Saved to GitHub!', 'success');
+  } catch(e) {
+    setSyncStatus('error', 'Save failed');
+    toast('Save failed: ' + e.message, 'error');
+  }
+}
+
+/* ── LOCAL MODE ── */
+function saveLocal() {
+  localStorage.setItem('litreview_papers', JSON.stringify(papers));
+  setSyncStatus('ok', 'Local save ✓');
+}
+
+function loadLocal() {
+  const p = localStorage.getItem('litreview_papers');
+  papers = p ? JSON.parse(p) : [];
+}
+
+/* ── CONNECT ── */
+async function connectGitHub() {
+  const cfg = {
+    owner: document.getElementById('setup-owner').value.trim(),
+    repo: document.getElementById('setup-repo').value.trim(),
+    branch: document.getElementById('setup-branch').value.trim() || 'main',
+    filepath: document.getElementById('setup-filepath').value.trim() || 'papers.json',
+    token: document.getElementById('setup-token').value.trim()
+  };
+  if (!cfg.owner || !cfg.repo || !cfg.token) {
+    toast('Please fill in owner, repo, and token.', 'error'); return;
+  }
+  saveConfig(cfg);
+  localMode = false;
+  const ok = await loadFromGitHub();
+  if (ok) showApp();
+}
+
+function useLocalMode() {
+  localMode = true;
+  loadLocal();
+  setSyncStatus('ok', 'Local mode');
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app-main').style.display = 'block';
+  document.getElementById('export-bib-btn').style.display = 'inline-flex';
+  renderTable();
+  renderYearFilter();
+}
+
+/* ── SYNC STATUS ── */
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('sync-dot');
+  document.getElementById('sync-text').textContent = text;
+  dot.className = 'sync-dot ' + state;
+}
+
+/* ── RENDER TABLE ── */
+function renderTable() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const typeF = document.getElementById('type-filter').value;
+  const yearF = document.getElementById('year-filter').value;
+
+  let filtered = papers.filter(p => {
+    const matchQ = !q || (p.title||'').toLowerCase().includes(q)
+      || (p.authors||'').toLowerCase().includes(q)
+      || (p.keywords||'').toLowerCase().includes(q)
+      || (p.abstract||'').toLowerCase().includes(q)
+      || (p.notes||'').toLowerCase().includes(q)
+      || (p.citekey||'').toLowerCase().includes(q);
+    const matchType = !typeF || p.type === typeF;
+    const matchYear = !yearF || String(p.year) === yearF;
+    return matchQ && matchType && matchYear;
+  });
+
+  filtered.sort((a,b) => {
+    let va = a[sortField] || '', vb = b[sortField] || '';
+    if (typeof va === 'string') va = va.toLowerCase();
+    if (typeof vb === 'string') vb = vb.toLowerCase();
+    if (va < vb) return -sortDir;
+    if (va > vb) return sortDir;
+    return 0;
+  });
+
+  document.getElementById('paper-count').textContent = filtered.length;
+
+  const tbody = document.getElementById('papers-tbody');
+  const empty = document.getElementById('empty-state');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(p => {
+    const hasPdf = p.pdf && p.pdf.trim();
+    const hasDoi = p.doi && p.doi.trim();
+    const hasUrl = p.url && p.url.trim();
+    const doiHref = hasDoi ? (p.doi.startsWith('http') ? p.doi : 'https://doi.org/' + p.doi) : '';
+    const pdfHref = hasPdf ? p.pdf : '#';
+    const urlHref = hasUrl ? p.url : '#';
+    const authorsShort = shortenAuthors(p.authors);
+    const keywords = (p.keywords||'').split(',').map(k=>k.trim()).filter(Boolean);
+
+    return `<tr>
+      <td class="td-title">
+        <div class="paper-title">${escHtml(p.title||'(no title)')}</div>
+        ${p.journal ? `<div class="paper-venue">${escHtml(p.journal)}</div>` : ''}
+        ${keywords.slice(0,3).map(k=>`<span class="tag">${escHtml(k)}</span>`).join('')}
+      </td>
+      <td class="td-authors">${escHtml(authorsShort)}</td>
+      <td class="td-year">${p.year||'—'}</td>
+      <td><span class="type-badge">${p.type||'misc'}</span></td>
+      <td>
+        <div class="action-row">
+          <a class="btn-pdf ${hasPdf?'':'disabled'}" href="${pdfHref}" target="_blank" rel="noopener" title="Open PDF">
+            <svg width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.5 1H2C1.448 1 1 1.448 1 2v12c0 .552.448 1 1 1h9c.552 0 1-.448 1-1V5.5L7.5 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M7.5 1v4.5H12" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M3.5 9h6M3.5 11.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </a>
+          <a class="btn-doi ${hasDoi?'':'disabled'}" href="${doiHref}" target="_blank" rel="noopener" title="Open DOI / Link">
+            DOI
+          </a>
+          ${hasUrl ? `<a class="btn-doi" href="${urlHref}" target="_blank" rel="noopener" title="Open paper page" style="font-size:0.7rem">URL</a>` : ''}
+        </div>
+      </td>
+      <td><div class="access-date">${p.accessed ? formatDate(p.accessed) : '—'}</div></td>
+      <td>
+        <div class="action-row">
+          <button class="btn-bib" onclick='showBibtex("${p.id}")' title="View BibTeX">BIB</button>
+          <button class="btn-icon" onclick='editPaper("${p.id}")' title="Edit">✏️</button>
+          <button class="btn-icon" style="color:var(--danger)" onclick='deletePaper("${p.id}")' title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── SORT ── */
+function sortBy(field) {
+  if (sortField === field) sortDir *= -1;
+  else { sortField = field; sortDir = 1; }
+  renderTable();
+}
+
+/* ── YEAR FILTER ── */
+function renderYearFilter() {
+  const years = [...new Set(papers.map(p=>p.year).filter(Boolean))].sort((a,b)=>b-a);
+  const sel = document.getElementById('year-filter');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All years</option>' +
+    years.map(y=>`<option value="${y}" ${String(y)===current?'selected':''}>${y}</option>`).join('');
+}
+
+/* ── CITE KEY ── */
+function updateCiteKey() {
+  const authors = document.getElementById('f-authors').value;
+  const year = document.getElementById('f-year').value;
+  const title = document.getElementById('f-title').value;
+  document.getElementById('f-citekey').value = generateCiteKey(authors, year, title);
+}
+
+function generateCiteKey(authors, year, title) {
+  const firstAuthor = (authors || '').split(' and ')[0].split(',')[0].trim().toLowerCase().replace(/[^a-z]/g,'');
+  const y = year || '';
+  const firstWord = (title || '').toLowerCase().replace(/[^a-z ]/g,'').trim().split(' ').find(w => w.length > 3) || '';
+  return `${firstAuthor}${y}${firstWord}`;
+}
+
+/* ── OPEN ADD PAPER ── */
+function openAddPaper() {
+  editingId = null;
+  document.getElementById('paper-modal-title').textContent = 'Add Paper';
+  clearPaperForm();
+  document.getElementById('f-accessed').value = new Date().toISOString().split('T')[0];
+  openModal('paper-modal');
+}
+
+/* ── EDIT PAPER ── */
+function editPaper(id) {
+  const p = papers.find(x => x.id === id);
+  if (!p) return;
+  editingId = id;
+  document.getElementById('paper-modal-title').textContent = 'Edit Paper';
+  document.getElementById('f-title').value = p.title || '';
+  document.getElementById('f-authors').value = p.authors || '';
+  document.getElementById('f-year').value = p.year || '';
+  document.getElementById('f-type').value = p.type || 'article';
+  document.getElementById('f-journal').value = p.journal || '';
+  document.getElementById('f-publisher').value = p.publisher || '';
+  document.getElementById('f-volume').value = p.volume || '';
+  document.getElementById('f-number').value = p.number || '';
+  document.getElementById('f-pages').value = p.pages || '';
+  document.getElementById('f-doi').value = p.doi || '';
+  document.getElementById('f-pdf').value = p.pdf || '';
+  document.getElementById('f-url').value = p.url || '';
+  document.getElementById('f-accessed').value = p.accessed || '';
+  document.getElementById('f-citekey').value = p.citekey || '';
+  document.getElementById('f-keywords').value = p.keywords || '';
+  document.getElementById('f-abstract').value = p.abstract || '';
+  document.getElementById('f-notes').value = p.notes || '';
+  openModal('paper-modal');
+}
+
+/* ── SAVE PAPER ── */
+async function savePaper() {
+  const title = document.getElementById('f-title').value.trim();
+  const authors = document.getElementById('f-authors').value.trim();
+  const year = parseInt(document.getElementById('f-year').value) || null;
+  if (!title || !authors) { toast('Title and authors are required.', 'error'); return; }
+
+  const citekey = document.getElementById('f-citekey').value.trim() || generateCiteKey(authors, year, title);
+
+  const paper = {
+    id: editingId || Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    citekey,
+    title,
+    authors,
+    year,
+    type: document.getElementById('f-type').value,
+    journal: document.getElementById('f-journal').value.trim(),
+    publisher: document.getElementById('f-publisher').value.trim(),
+    volume: document.getElementById('f-volume').value.trim(),
+    number: document.getElementById('f-number').value.trim(),
+    pages: document.getElementById('f-pages').value.trim(),
+    doi: document.getElementById('f-doi').value.trim(),
+    pdf: document.getElementById('f-pdf').value.trim(),
+    url: document.getElementById('f-url').value.trim(),
+    accessed: document.getElementById('f-accessed').value,
+    keywords: document.getElementById('f-keywords').value.trim(),
+    abstract: document.getElementById('f-abstract').value.trim(),
+    notes: document.getElementById('f-notes').value.trim(),
+    updated: new Date().toISOString()
+  };
+
+  if (editingId) {
+    const idx = papers.findIndex(x => x.id === editingId);
+    papers[idx] = paper;
+  } else {
+    papers.push(paper);
+  }
+
+  closeModal('paper-modal');
+  renderTable();
+  renderYearFilter();
+  await saveToGitHub();
+}
+
+/* ── DELETE PAPER ── */
+async function deletePaper(id) {
+  if (!confirm('Delete this paper?')) return;
+  papers = papers.filter(p => p.id !== id);
+  renderTable();
+  renderYearFilter();
+  await saveToGitHub();
+}
+
+/* ── CLEAR FORM ── */
+function clearPaperForm() {
+  ['f-title','f-authors','f-year','f-journal','f-publisher','f-volume','f-number',
+   'f-pages','f-doi','f-pdf','f-url','f-accessed','f-citekey','f-keywords','f-abstract','f-notes']
+  .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('f-type').value = 'article';
+}
+
+/* ── TOGGLE FIELDS ── */
+function toggleFields() {
+  const type = document.getElementById('f-type').value;
+  const jLabel = document.getElementById('journal-label');
+  if (['inproceedings','incollection'].includes(type)) jLabel.textContent = 'Booktitle';
+  else if (type === 'phdthesis') jLabel.textContent = 'School';
+  else if (type === 'techreport') jLabel.textContent = 'Institution';
+  else jLabel.textContent = 'Journal';
+}
+
+/* ── BIBTEX GENERATION ── */
+function generateBibtex(p) {
+  const fields = [];
+  const add = (key, val) => { if (val) fields.push(`  ${key} = {${val}}`); };
+  add('title', p.title);
+  add('author', formatAuthors(p.authors));
+  if (p.year) add('year', String(p.year));
+
+  const type = p.type || 'misc';
+  if (['article'].includes(type)) {
+    add('journal', p.journal);
+    add('volume', p.volume);
+    add('number', p.number);
+  } else if (['inproceedings','incollection'].includes(type)) {
+    add('booktitle', p.journal);
+  } else if (type === 'book') {
+    add('publisher', p.publisher);
+  } else if (type === 'phdthesis') {
+    add('school', p.journal || p.publisher);
+  } else if (type === 'techreport') {
+    add('institution', p.journal || p.publisher);
+    add('number', p.number);
+  }
+
+  add('pages', p.pages);
+  add('publisher', ['article','inproceedings','incollection'].includes(type) ? null : p.publisher);
+  if (p.doi) add('doi', p.doi);
+  if (p.url) add('url', p.url);
+  if (p.accessed) add('note', `Accessed: ${formatDate(p.accessed)}`);
+  if (p.keywords) add('keywords', p.keywords);
+
+  return `@${type}{${p.citekey || 'key'},\n${fields.join(',\n')}\n}`;
+}
+
+function formatAuthors(raw) {
+  // "Smith, John and Doe, Jane" → proper BibTeX author string
+  return (raw||'').replace(/\s+and\s+/gi, ' and ');
+}
+
+/* ── SHOW BIBTEX ── */
+function showBibtex(id) {
+  const p = papers.find(x => x.id === id);
+  if (!p) return;
+  const bib = generateBibtex(p);
+  currentBibtex = bib;
+  document.getElementById('bibtex-content').textContent = bib;
+  openModal('bibtex-modal');
+}
+
+function copyBibtex() {
+  navigator.clipboard.writeText(currentBibtex).then(() => toast('Copied to clipboard!', 'success'));
+}
+
+/* ── EXPORT ALL .bib ── */
+function exportAllBib() {
+  const all = papers.map(generateBibtex).join('\n\n');
+  const blob = new Blob([all], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'literature_review.bib';
+  a.click();
+  toast('Exported literature_review.bib', 'success');
+}
+
+/* ── SETTINGS ── */
+function openSettings() {
+  document.getElementById('s-owner').value = githubConfig.owner || '';
+  document.getElementById('s-repo').value = githubConfig.repo || '';
+  document.getElementById('s-branch').value = githubConfig.branch || 'main';
+  document.getElementById('s-filepath').value = githubConfig.filepath || 'papers.json';
+  document.getElementById('s-token').value = githubConfig.token || '';
+  openModal('settings-modal');
+}
+
+async function saveSettings() {
+  const cfg = {
+    owner: document.getElementById('s-owner').value.trim(),
+    repo: document.getElementById('s-repo').value.trim(),
+    branch: document.getElementById('s-branch').value.trim() || 'main',
+    filepath: document.getElementById('s-filepath').value.trim() || 'papers.json',
+    token: document.getElementById('s-token').value.trim()
+  };
+  saveConfig(cfg);
+  closeModal('settings-modal');
+  if (cfg.owner && cfg.repo && cfg.token) {
+    await loadFromGitHub();
+    renderTable();
+    renderYearFilter();
+    toast('Reconnected!', 'success');
+  }
+}
+
+function clearAllLocal() {
+  if (confirm('Clear local cache? (GitHub data is unaffected)')) {
+    localStorage.removeItem('litreview_config');
+    localStorage.removeItem('litreview_papers');
+    location.reload();
+  }
+}
+
+/* ── MODAL HELPERS ── */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+/* ── TOAST ── */
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = type==='success'?'✓': type==='error'?'✗':'ℹ';
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ── HELPERS ── */
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function shortenAuthors(s) {
+  if (!s) return '';
+  const parts = s.split(' and ');
+  if (parts.length <= 2) return s;
+  return parts[0].split(',')[0] + ' et al.';
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${d} ${months[+m-1]} ${y}`;
+}
+
+/* ── INIT ── */
+loadConfig();
+if (githubConfig.token && githubConfig.owner && githubConfig.repo) {
+  loadFromGitHub().then(ok => { if (ok) showApp(); });
+}
+</script>
+</body>
+</html>
