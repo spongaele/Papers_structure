@@ -32,9 +32,15 @@
   },
   {
     "id": "mor78t5cisy3",
-    "citekey": "blanchardjolivier1982bubbles",
+    "citekey": "blanchard1982bubbles",
     "title": "Bubbles, rational expectations and financial markets",
-    "authors": "Blanchard J. Olivier",
+    "authorsArr": [
+      {
+        "last": "Blanchard",
+        "first": "J. Olivier"
+      }
+    ],
+    "authors": "Blanchard, J. Olivier",
     "year": 1982,
     "type": "article",
     "journal": "NBER",
@@ -49,6 +55,6 @@
     "keywords": "bubbles, expectations",
     "abstract": "Nature and presence of bubbles in financial markets.",
     "notes": "Very relevant and interesting if we write the paper using bubbles.",
-    "updated": "2026-05-04T12:52:21.264Z"
+    "updated": "2026-05-04T15:31:02.368Z"
   }
 ]
