@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "mor665tnjoo0",
+    "citekey": "dilipabreu2003bubbles",
+    "title": "Bubbles and crashes",
+    "authors": "Dilip Abreu, Markus K. Brunnermeier",
+    "year": 2003,
+    "type": "article",
+    "journal": "Econometrica",
+    "publisher": "",
+    "volume": "",
+    "number": "",
+    "pages": "",
+    "doi": "",
+    "pdf": "https://github.com/spongaele/Asset-bubbles/blob/main/01_literature/asset_pricing_bubbles/Abreu%20(2003)_Bubbles%20and%20Crashes.pdf",
+    "url": "",
+    "accessed": "2026-05-04",
+    "keywords": "",
+    "abstract": "We present a model in which an asset bubble can persist despite the presence of rational arbitrageurs.",
+    "notes": "",
+    "updated": "2026-05-04T12:22:18.107Z"
+  }
+]
