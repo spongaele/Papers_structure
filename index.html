@@ -10,27 +10,27 @@
 <style>
   /* ── RESET & BASE ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-    --bg:        #f5f2ee;
-    --bg2:       #ffffff;
-    --bg3:       #ede9e3;
-    --border:    rgba(0,0,0,0.08);
-    --border2:   rgba(0,0,0,0.14);
-    --text:      #2a2420;
-    --text-muted:#8a7e74;
-    --accent:    #a0722a;
-    --accent2:   #c08a3a;
-    --danger:    #b03030;
-    --success:   #3a8050;
-    --info:      #3a6ea0;
+ 
+  :root {
+    --bg:        #111318;
+    --bg2:       #191c24;
+    --bg3:       #21252f;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.13);
+    --text:      #e8e2d6;
+    --text-muted:#8a8070;
+    --accent:    #c89b50;
+    --accent2:   #e4b96a;
+    --danger:    #c05050;
+    --success:   #5a9e6f;
+    --info:      #5a8ec0;
     --radius:    10px;
     --radius-lg: 16px;
-    --shadow:    0 4px 24px rgba(0,0,0,0.08);
-}
-
+    --shadow:    0 4px 24px rgba(0,0,0,0.5);
+  }
+ 
   html { scroll-behavior: smooth; }
-
+ 
   body {
     font-family: 'Source Serif 4', Georgia, serif;
     font-weight: 300;
@@ -39,7 +39,7 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
+ 
   /* ── NOISE TEXTURE OVERLAY ── */
   body::before {
     content: '';
@@ -50,7 +50,7 @@
     z-index: 0;
     opacity: 0.4;
   }
-
+ 
   /* ── HEADER ── */
   header {
     position: sticky; top: 0; z-index: 100;
@@ -61,11 +61,11 @@
     display: flex; align-items: center; justify-content: space-between;
     height: 64px;
   }
-
+ 
   .brand {
     display: flex; align-items: center; gap: 12px;
   }
-
+ 
   .brand-icon {
     width: 34px; height: 34px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -73,7 +73,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 16px;
   }
-
+ 
   .brand h1 {
     font-family: 'Playfair Display', serif;
     font-size: 1.35rem;
@@ -81,7 +81,7 @@
     letter-spacing: -0.02em;
     color: var(--text);
   }
-
+ 
   .brand span {
     font-family: 'Source Serif 4', serif;
     font-weight: 300;
@@ -90,14 +90,14 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-
+ 
   .header-right {
     display: flex; align-items: center; gap: 10px;
   }
-
+ 
   /* ── BUTTONS ── */
   button { cursor: pointer; font-family: inherit; border: none; outline: none; }
-
+ 
   .btn {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 8px 16px;
@@ -108,28 +108,28 @@
     transition: all 0.15s ease;
     white-space: nowrap;
   }
-
+ 
   .btn-primary {
     background: var(--accent);
     color: #1a1208;
     font-weight: 600;
   }
   .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
-
+ 
   .btn-ghost {
     background: transparent;
     color: var(--text-muted);
     border: 1px solid var(--border2);
   }
   .btn-ghost:hover { background: var(--bg3); color: var(--text); }
-
+ 
   .btn-danger {
     background: transparent;
     color: var(--danger);
     border: 1px solid rgba(192,80,80,0.3);
   }
   .btn-danger:hover { background: rgba(192,80,80,0.12); }
-
+ 
   .btn-icon {
     padding: 7px;
     border-radius: 7px;
@@ -141,9 +141,9 @@
     font-size: 0.9rem;
   }
   .btn-icon:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
-
+ 
   .btn-sm { padding: 5px 11px; font-size: 0.8rem; }
-
+ 
   /* ── MAIN LAYOUT ── */
   main {
     position: relative; z-index: 1;
@@ -151,7 +151,7 @@
     margin: 0 auto;
     padding: 2rem;
   }
-
+ 
   /* ── SETUP SCREEN ── */
   #setup-screen {
     display: flex;
@@ -160,7 +160,7 @@
     min-height: calc(100vh - 64px);
     padding: 2rem;
   }
-
+ 
   .setup-card {
     background: var(--bg2);
     border: 1px solid var(--border2);
@@ -170,25 +170,25 @@
     width: 100%;
     box-shadow: var(--shadow);
   }
-
+ 
   .setup-card h2 {
     font-family: 'Playfair Display', serif;
     font-size: 1.6rem;
     margin-bottom: 0.4rem;
   }
-
+ 
   .setup-card p {
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 2rem;
     line-height: 1.6;
   }
-
+ 
   .setup-steps {
     display: flex; flex-direction: column; gap: 1rem;
     margin-bottom: 1.5rem;
   }
-
+ 
   .step-hint {
     background: var(--bg3);
     border: 1px solid var(--border);
@@ -198,10 +198,10 @@
     color: var(--text-muted);
     line-height: 1.7;
   }
-
+ 
   .step-hint strong { color: var(--accent); }
   .step-hint code { font-family: 'JetBrains Mono', monospace; background: rgba(200,155,80,0.1); padding: 1px 5px; border-radius: 3px; font-size: 0.78rem; }
-
+ 
   /* ── TOOLBAR ── */
   .toolbar {
     display: flex;
@@ -210,12 +210,12 @@
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
   }
-
+ 
   .search-box {
     flex: 1; min-width: 220px;
     position: relative;
   }
-
+ 
   .search-box input {
     width: 100%;
     background: var(--bg2);
@@ -228,7 +228,7 @@
     transition: border-color 0.15s;
   }
   .search-box input:focus { outline: none; border-color: var(--accent); }
-
+ 
   .search-icon {
     position: absolute; left: 12px; top: 50%;
     transform: translateY(-50%);
@@ -236,7 +236,7 @@
     pointer-events: none;
     font-size: 0.85rem;
   }
-
+ 
   .filter-select {
     background: var(--bg2);
     border: 1px solid var(--border2);
@@ -252,7 +252,7 @@
     cursor: pointer;
   }
   .filter-select:focus { outline: none; border-color: var(--accent); }
-
+ 
   .stats-bar {
     display: flex; align-items: center; gap: 6px;
     padding: 8px 14px;
@@ -263,9 +263,9 @@
     color: var(--text-muted);
     white-space: nowrap;
   }
-
+ 
   .stats-bar strong { color: var(--accent); }
-
+ 
   /* ── SYNC STATUS ── */
   .sync-status {
     display: flex; align-items: center; gap: 6px;
@@ -275,7 +275,7 @@
     border: 1px solid var(--border);
     background: var(--bg2);
   }
-
+ 
   .sync-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
@@ -284,12 +284,12 @@
   .sync-dot.ok { background: var(--success); }
   .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
   .sync-dot.error { background: var(--danger); }
-
+ 
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
-
+ 
   /* ── TABLE ── */
   .table-wrapper {
     background: var(--bg2);
@@ -298,17 +298,17 @@
     overflow: hidden;
     box-shadow: var(--shadow);
   }
-
+ 
   table {
     width: 100%;
     border-collapse: collapse;
   }
-
+ 
   thead tr {
     background: var(--bg3);
     border-bottom: 1px solid var(--border2);
   }
-
+ 
   th {
     padding: 13px 16px;
     text-align: left;
@@ -325,24 +325,24 @@
   th:hover { color: var(--text); }
   th .sort-icon { margin-left: 4px; opacity: 0.5; }
   th.sorted .sort-icon { opacity: 1; color: var(--accent); }
-
+ 
   tbody tr {
     border-bottom: 1px solid var(--border);
     transition: background 0.12s;
   }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: rgba(255,255,255,0.025); }
-
+ 
   td {
     padding: 14px 16px;
     vertical-align: middle;
     font-size: 0.88rem;
   }
-
+ 
   .td-title {
     max-width: 280px;
   }
-
+ 
   .paper-title {
     font-weight: 600;
     color: var(--text);
@@ -353,20 +353,20 @@
     line-height: 1.4;
     margin-bottom: 3px;
   }
-
+ 
   .paper-venue {
     font-size: 0.78rem;
     color: var(--text-muted);
     font-style: italic;
   }
-
+ 
   .td-authors {
     max-width: 200px;
     color: var(--text-muted);
     font-size: 0.82rem;
     line-height: 1.4;
   }
-
+ 
   .td-year {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
@@ -374,7 +374,7 @@
     font-weight: 500;
     white-space: nowrap;
   }
-
+ 
   .type-badge {
     display: inline-block;
     padding: 2px 9px;
@@ -386,15 +386,15 @@
     border: 1px solid rgba(200,155,80,0.25);
     white-space: nowrap;
   }
-
+ 
   .td-actions {
     white-space: nowrap;
   }
-
+ 
   .action-row {
     display: flex; align-items: center; gap: 5px;
   }
-
+ 
   /* PDF icon button */
   .btn-pdf {
     display: inline-flex; align-items: center; justify-content: center;
@@ -410,7 +410,7 @@
   }
   .btn-pdf:hover { background: rgba(192,80,80,0.28); }
   .btn-pdf.disabled { opacity: 0.2; pointer-events: none; }
-
+ 
   .btn-doi {
     display: inline-flex; align-items: center; justify-content: center;
     width: 30px; height: 30px;
@@ -425,7 +425,7 @@
   }
   .btn-doi:hover { background: rgba(90,142,192,0.28); }
   .btn-doi.disabled { opacity: 0.2; pointer-events: none; }
-
+ 
   .btn-bib {
     display: inline-flex; align-items: center; justify-content: center;
     width: 30px; height: 30px;
@@ -440,17 +440,17 @@
     cursor: pointer;
   }
   .btn-bib:hover { background: rgba(90,158,111,0.28); }
-
+ 
   /* ── EMPTY STATE ── */
   .empty-state {
     text-align: center;
     padding: 4rem 2rem;
   }
-
+ 
   .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
   .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.5rem; }
   .empty-state p { color: var(--text-muted); font-size: 0.9rem; }
-
+ 
   /* ── MODAL ── */
   .modal-overlay {
     display: none;
@@ -464,7 +464,7 @@
     overflow-y: auto;
   }
   .modal-overlay.open { display: flex; }
-
+ 
   .modal {
     background: var(--bg2);
     border: 1px solid var(--border2);
@@ -475,41 +475,41 @@
     margin: auto;
     animation: slideUp 0.2s ease;
   }
-
+ 
   @keyframes slideUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
+ 
   .modal-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.5rem 1.75rem;
     border-bottom: 1px solid var(--border);
   }
-
+ 
   .modal-header h2 {
     font-family: 'Playfair Display', serif;
     font-size: 1.25rem;
   }
-
+ 
   .modal-body { padding: 1.75rem; }
-
+ 
   .modal-footer {
     display: flex; align-items: center; justify-content: flex-end; gap: 10px;
     padding: 1rem 1.75rem;
     border-top: 1px solid var(--border);
   }
-
+ 
   /* ── FORM ── */
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
-
+ 
   .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-group.full { grid-column: 1 / -1; }
-
+ 
   label {
     font-size: 0.75rem;
     font-weight: 600;
@@ -517,9 +517,9 @@
     text-transform: uppercase;
     color: var(--text-muted);
   }
-
+ 
   label .req { color: var(--accent); margin-left: 2px; }
-
+ 
   input, select, textarea {
     background: var(--bg3);
     border: 1px solid var(--border2);
@@ -537,11 +537,11 @@
     box-shadow: 0 0 0 2px rgba(200,155,80,0.12);
   }
   input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 0.6; }
-
+ 
   textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-
+ 
   select option { background: var(--bg3); }
-
+ 
   .cite-key-preview {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
@@ -552,7 +552,7 @@
     margin-top: 3px;
     display: inline-block;
   }
-
+ 
   /* ── BIBTEX MODAL ── */
   .bibtex-output {
     font-family: 'JetBrains Mono', monospace;
@@ -568,11 +568,11 @@
     max-height: 400px;
     overflow-y: auto;
   }
-
+ 
   .bibtex-key { color: var(--accent); }
   .bibtex-field { color: #7ab4e0; }
   .bibtex-value { color: #a8d8a8; }
-
+ 
   /* ── SETTINGS PANEL ── */
   .settings-section { margin-bottom: 1.5rem; }
   .settings-section h3 {
@@ -583,7 +583,7 @@
     border-bottom: 1px solid var(--border);
     color: var(--accent);
   }
-
+ 
   /* ── TOAST ── */
   #toast-container {
     position: fixed;
@@ -591,7 +591,7 @@
     z-index: 9999;
     display: flex; flex-direction: column; gap: 8px;
   }
-
+ 
   .toast {
     padding: 12px 18px;
     border-radius: var(--radius);
@@ -602,19 +602,19 @@
     max-width: 320px;
     backdrop-filter: blur(8px);
   }
-
+ 
   .toast.success { background: rgba(90,158,111,0.9); border: 1px solid rgba(90,158,111,0.5); }
   .toast.error   { background: rgba(192,80,80,0.9);  border: 1px solid rgba(192,80,80,0.5); }
   .toast.info    { background: rgba(90,142,192,0.9); border: 1px solid rgba(90,142,192,0.5); }
-
+ 
   @keyframes toastIn {
     from { opacity: 0; transform: translateX(20px); }
     to   { opacity: 1; transform: translateX(0); }
   }
-
+ 
   /* ── MISC ── */
   .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
-
+ 
   .tag {
     display: inline-block;
     padding: 2px 8px;
@@ -625,18 +625,18 @@
     color: var(--text-muted);
     margin: 2px;
   }
-
+ 
   .access-date {
     font-size: 0.75rem;
     color: var(--text-muted);
     font-style: italic;
   }
-
+ 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
+ 
   /* Responsive */
   @media (max-width: 768px) {
     .form-grid { grid-template-columns: 1fr; }
@@ -647,7 +647,7 @@
 </style>
 </head>
 <body>
-
+ 
 <!-- HEADER -->
 <header>
   <div class="brand">
@@ -666,13 +666,13 @@
     <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Settings</button>
   </div>
 </header>
-
+ 
 <!-- SETUP SCREEN -->
 <div id="setup-screen">
   <div class="setup-card">
     <h2>Connect to GitHub</h2>
     <p>LitReview stores your papers in a JSON file inside a GitHub repository, enabling real-time collaboration with your colleagues.</p>
-
+ 
     <div class="setup-steps">
       <div class="step-hint">
         <strong>Step 1 — Create a GitHub repo</strong><br>
@@ -689,7 +689,7 @@
         Deploy to GitHub Pages (Settings → Pages → from branch <code>main</code>) and share the URL with your collaborator. You can both use the same token or each generate their own.
       </div>
     </div>
-
+ 
     <div class="form-grid" style="margin-bottom:1rem">
       <div class="form-group">
         <label>GitHub Owner <span class="req">*</span></label>
@@ -712,14 +712,14 @@
         <input type="password" id="setup-token" placeholder="github_pat_…"/>
       </div>
     </div>
-
+ 
     <button class="btn btn-primary" style="width:100%" onclick="connectGitHub()">Connect & Load Papers →</button>
     <div style="margin-top:1rem; text-align:center">
       <button class="btn btn-ghost btn-sm" onclick="useLocalMode()">or use Local Mode (no GitHub)</button>
     </div>
   </div>
 </div>
-
+ 
 <!-- MAIN APP (hidden until connected) -->
 <main id="app-main" style="display:none">
   <!-- TOOLBAR -->
@@ -728,6 +728,12 @@
       <span class="search-icon">🔍</span>
       <input type="text" id="search-input" placeholder="Search by title, author, keyword…" oninput="renderTable()"/>
     </div>
+    <select class="filter-select" id="author-filter" onchange="renderTable()">
+      <option value="">All authors</option>
+    </select>
+    <select class="filter-select" id="keyword-filter" onchange="renderTable()">
+      <option value="">All keywords</option>
+    </select>
     <select class="filter-select" id="type-filter" onchange="renderTable()">
       <option value="">All types</option>
       <option value="article">article</option>
@@ -746,7 +752,7 @@
     </div>
     <button class="btn btn-primary" onclick="openAddPaper()">+ Add Paper</button>
   </div>
-
+ 
   <!-- TABLE -->
   <div class="table-wrapper">
     <table>
@@ -757,7 +763,7 @@
           <th onclick="sortBy('year')">Year <span class="sort-icon">↕</span></th>
           <th onclick="sortBy('type')">Type <span class="sort-icon">↕</span></th>
           <th>Links</th>
-          <th onclick="sortBy('accessed')">Accessed <span class="sort-icon">↕</span></th>
+          <th onclick="sortBy('notes')">Notes <span class="sort-icon">↕</span></th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -770,11 +776,11 @@
     </div>
   </div>
 </main>
-
+ 
 <!-- ══════════════════════════════════════════ -->
 <!--  MODALS                                    -->
 <!-- ══════════════════════════════════════════ -->
-
+ 
 <!-- ADD / EDIT PAPER MODAL -->
 <div class="modal-overlay" id="paper-modal">
   <div class="modal">
@@ -879,7 +885,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- BIBTEX MODAL -->
 <div class="modal-overlay" id="bibtex-modal">
   <div class="modal" style="max-width:600px">
@@ -896,7 +902,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settings-modal">
   <div class="modal" style="max-width:560px">
@@ -941,10 +947,10 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
-
+ 
 <!-- ══════════════════════════════════════════ -->
 <!--  JAVASCRIPT                                -->
 <!-- ══════════════════════════════════════════ -->
@@ -958,18 +964,18 @@ let currentBibtex = '';
 let githubConfig = {};
 let fileSha = null; // needed for GitHub API PUT
 let localMode = false;
-
+ 
 /* ── LOAD CONFIG FROM LOCALSTORAGE ── */
 function loadConfig() {
   const c = localStorage.getItem('litreview_config');
   if (c) githubConfig = JSON.parse(c);
 }
-
+ 
 function saveConfig(cfg) {
   githubConfig = cfg;
   localStorage.setItem('litreview_config', JSON.stringify(cfg));
 }
-
+ 
 /* ── GITHUB API ── */
 async function ghFetch(path, method = 'GET', body = null) {
   const url = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/${githubConfig.filepath}`;
@@ -989,7 +995,7 @@ async function ghFetch(path, method = 'GET', body = null) {
   }
   return res.json();
 }
-
+ 
 async function loadFromGitHub() {
   setSyncStatus('syncing', 'Loading…');
   try {
@@ -1005,7 +1011,7 @@ async function loadFromGitHub() {
     return false;
   }
 }
-
+ 
 async function saveToGitHub() {
   if (localMode) { saveLocal(); return; }
   setSyncStatus('syncing', 'Saving…');
@@ -1025,18 +1031,18 @@ async function saveToGitHub() {
     toast('Save failed: ' + e.message, 'error');
   }
 }
-
+ 
 /* ── LOCAL MODE ── */
 function saveLocal() {
   localStorage.setItem('litreview_papers', JSON.stringify(papers));
   setSyncStatus('ok', 'Local save ✓');
 }
-
+ 
 function loadLocal() {
   const p = localStorage.getItem('litreview_papers');
   papers = p ? JSON.parse(p) : [];
 }
-
+ 
 /* ── CONNECT ── */
 async function connectGitHub() {
   const cfg = {
@@ -1054,35 +1060,39 @@ async function connectGitHub() {
   const ok = await loadFromGitHub();
   if (ok) showApp();
 }
-
+ 
 function useLocalMode() {
   localMode = true;
   loadLocal();
   setSyncStatus('ok', 'Local mode');
   showApp();
 }
-
+ 
 function showApp() {
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('app-main').style.display = 'block';
   document.getElementById('export-bib-btn').style.display = 'inline-flex';
   renderTable();
   renderYearFilter();
+  renderAuthorFilter();
+  renderKeywordFilter();
 }
-
+ 
 /* ── SYNC STATUS ── */
 function setSyncStatus(state, text) {
   const dot = document.getElementById('sync-dot');
   document.getElementById('sync-text').textContent = text;
   dot.className = 'sync-dot ' + state;
 }
-
+ 
 /* ── RENDER TABLE ── */
 function renderTable() {
   const q = document.getElementById('search-input').value.toLowerCase();
   const typeF = document.getElementById('type-filter').value;
   const yearF = document.getElementById('year-filter').value;
-
+  const authorF = document.getElementById('author-filter').value.toLowerCase();
+  const keywordF = document.getElementById('keyword-filter').value.toLowerCase();
+ 
   let filtered = papers.filter(p => {
     const matchQ = !q || (p.title||'').toLowerCase().includes(q)
       || (p.authors||'').toLowerCase().includes(q)
@@ -1092,9 +1102,11 @@ function renderTable() {
       || (p.citekey||'').toLowerCase().includes(q);
     const matchType = !typeF || p.type === typeF;
     const matchYear = !yearF || String(p.year) === yearF;
-    return matchQ && matchType && matchYear;
+    const matchAuthor = !authorF || (p.authors||'').toLowerCase().includes(authorF);
+    const matchKeyword = !keywordF || (p.keywords||'').toLowerCase().split(',').map(k=>k.trim()).includes(keywordF);
+    return matchQ && matchType && matchYear && matchAuthor && matchKeyword;
   });
-
+ 
   filtered.sort((a,b) => {
     let va = a[sortField] || '', vb = b[sortField] || '';
     if (typeof va === 'string') va = va.toLowerCase();
@@ -1103,19 +1115,19 @@ function renderTable() {
     if (va > vb) return sortDir;
     return 0;
   });
-
+ 
   document.getElementById('paper-count').textContent = filtered.length;
-
+ 
   const tbody = document.getElementById('papers-tbody');
   const empty = document.getElementById('empty-state');
-
+ 
   if (filtered.length === 0) {
     tbody.innerHTML = '';
     empty.style.display = 'block';
     return;
   }
   empty.style.display = 'none';
-
+ 
   tbody.innerHTML = filtered.map(p => {
     const hasPdf = p.pdf && p.pdf.trim();
     const hasDoi = p.doi && p.doi.trim();
@@ -1125,7 +1137,8 @@ function renderTable() {
     const urlHref = hasUrl ? p.url : '#';
     const authorsShort = shortenAuthors(p.authors);
     const keywords = (p.keywords||'').split(',').map(k=>k.trim()).filter(Boolean);
-
+    const notesShort = p.notes ? (p.notes.length > 120 ? p.notes.slice(0, 120) + '…' : p.notes) : '';
+ 
     return `<tr>
       <td class="td-title">
         <div class="paper-title">${escHtml(p.title||'(no title)')}</div>
@@ -1150,7 +1163,9 @@ function renderTable() {
           ${hasUrl ? `<a class="btn-doi" href="${urlHref}" target="_blank" rel="noopener" title="Open paper page" style="font-size:0.7rem">URL</a>` : ''}
         </div>
       </td>
-      <td><div class="access-date">${p.accessed ? formatDate(p.accessed) : '—'}</div></td>
+      <td class="td-notes" style="max-width:220px">
+        ${notesShort ? `<span style="font-size:0.82rem;color:var(--text-muted);font-style:italic;line-height:1.4;display:block">${escHtml(notesShort)}</span>` : '<span style="color:var(--border2)">—</span>'}
+      </td>
       <td>
         <div class="action-row">
           <button class="btn-bib" onclick='showBibtex("${p.id}")' title="View BibTeX">BIB</button>
@@ -1161,14 +1176,14 @@ function renderTable() {
     </tr>`;
   }).join('');
 }
-
+ 
 /* ── SORT ── */
 function sortBy(field) {
   if (sortField === field) sortDir *= -1;
   else { sortField = field; sortDir = 1; }
   renderTable();
 }
-
+ 
 /* ── YEAR FILTER ── */
 function renderYearFilter() {
   const years = [...new Set(papers.map(p=>p.year).filter(Boolean))].sort((a,b)=>b-a);
@@ -1177,7 +1192,37 @@ function renderYearFilter() {
   sel.innerHTML = '<option value="">All years</option>' +
     years.map(y=>`<option value="${y}" ${String(y)===current?'selected':''}>${y}</option>`).join('');
 }
-
+ 
+/* ── AUTHOR FILTER ── */
+function renderAuthorFilter() {
+  const sel = document.getElementById('author-filter');
+  const current = sel.value;
+  // Extract all unique last names from "Last, First and Last, First" format
+  const allAuthors = new Set();
+  papers.forEach(p => {
+    (p.authors||'').split(' and ').forEach(a => {
+      const last = a.split(',')[0].trim();
+      if (last) allAuthors.add(last);
+    });
+  });
+  const sorted = [...allAuthors].sort((a,b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">All authors</option>' +
+    sorted.map(a => `<option value="${a.toLowerCase()}" ${a.toLowerCase()===current?'selected':''}>${a}</option>`).join('');
+}
+ 
+/* ── KEYWORD FILTER ── */
+function renderKeywordFilter() {
+  const sel = document.getElementById('keyword-filter');
+  const current = sel.value;
+  const allKeywords = new Set();
+  papers.forEach(p => {
+    (p.keywords||'').split(',').map(k=>k.trim()).filter(Boolean).forEach(k => allKeywords.add(k));
+  });
+  const sorted = [...allKeywords].sort((a,b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">All keywords</option>' +
+    sorted.map(k => `<option value="${k.toLowerCase()}" ${k.toLowerCase()===current?'selected':''}>${k}</option>`).join('');
+}
+ 
 /* ── CITE KEY ── */
 function updateCiteKey() {
   const authors = document.getElementById('f-authors').value;
@@ -1185,14 +1230,14 @@ function updateCiteKey() {
   const title = document.getElementById('f-title').value;
   document.getElementById('f-citekey').value = generateCiteKey(authors, year, title);
 }
-
+ 
 function generateCiteKey(authors, year, title) {
   const firstAuthor = (authors || '').split(' and ')[0].split(',')[0].trim().toLowerCase().replace(/[^a-z]/g,'');
   const y = year || '';
   const firstWord = (title || '').toLowerCase().replace(/[^a-z ]/g,'').trim().split(' ').find(w => w.length > 3) || '';
   return `${firstAuthor}${y}${firstWord}`;
 }
-
+ 
 /* ── OPEN ADD PAPER ── */
 function openAddPaper() {
   editingId = null;
@@ -1201,7 +1246,7 @@ function openAddPaper() {
   document.getElementById('f-accessed').value = new Date().toISOString().split('T')[0];
   openModal('paper-modal');
 }
-
+ 
 /* ── EDIT PAPER ── */
 function editPaper(id) {
   const p = papers.find(x => x.id === id);
@@ -1227,16 +1272,16 @@ function editPaper(id) {
   document.getElementById('f-notes').value = p.notes || '';
   openModal('paper-modal');
 }
-
+ 
 /* ── SAVE PAPER ── */
 async function savePaper() {
   const title = document.getElementById('f-title').value.trim();
   const authors = document.getElementById('f-authors').value.trim();
   const year = parseInt(document.getElementById('f-year').value) || null;
   if (!title || !authors) { toast('Title and authors are required.', 'error'); return; }
-
+ 
   const citekey = document.getElementById('f-citekey').value.trim() || generateCiteKey(authors, year, title);
-
+ 
   const paper = {
     id: editingId || Date.now().toString(36) + Math.random().toString(36).slice(2,6),
     citekey,
@@ -1258,29 +1303,33 @@ async function savePaper() {
     notes: document.getElementById('f-notes').value.trim(),
     updated: new Date().toISOString()
   };
-
+ 
   if (editingId) {
     const idx = papers.findIndex(x => x.id === editingId);
     papers[idx] = paper;
   } else {
     papers.push(paper);
   }
-
+ 
   closeModal('paper-modal');
   renderTable();
   renderYearFilter();
+  renderAuthorFilter();
+  renderKeywordFilter();
   await saveToGitHub();
 }
-
+ 
 /* ── DELETE PAPER ── */
 async function deletePaper(id) {
   if (!confirm('Delete this paper?')) return;
   papers = papers.filter(p => p.id !== id);
   renderTable();
   renderYearFilter();
+  renderAuthorFilter();
+  renderKeywordFilter();
   await saveToGitHub();
 }
-
+ 
 /* ── CLEAR FORM ── */
 function clearPaperForm() {
   ['f-title','f-authors','f-year','f-journal','f-publisher','f-volume','f-number',
@@ -1288,7 +1337,7 @@ function clearPaperForm() {
   .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   document.getElementById('f-type').value = 'article';
 }
-
+ 
 /* ── TOGGLE FIELDS ── */
 function toggleFields() {
   const type = document.getElementById('f-type').value;
@@ -1298,7 +1347,7 @@ function toggleFields() {
   else if (type === 'techreport') jLabel.textContent = 'Institution';
   else jLabel.textContent = 'Journal';
 }
-
+ 
 /* ── BIBTEX GENERATION ── */
 function generateBibtex(p) {
   const fields = [];
@@ -1306,7 +1355,7 @@ function generateBibtex(p) {
   add('title', p.title);
   add('author', formatAuthors(p.authors));
   if (p.year) add('year', String(p.year));
-
+ 
   const type = p.type || 'misc';
   if (['article'].includes(type)) {
     add('journal', p.journal);
@@ -1322,22 +1371,22 @@ function generateBibtex(p) {
     add('institution', p.journal || p.publisher);
     add('number', p.number);
   }
-
+ 
   add('pages', p.pages);
   add('publisher', ['article','inproceedings','incollection'].includes(type) ? null : p.publisher);
   if (p.doi) add('doi', p.doi);
   if (p.url) add('url', p.url);
   if (p.accessed) add('note', `Accessed: ${formatDate(p.accessed)}`);
   if (p.keywords) add('keywords', p.keywords);
-
+ 
   return `@${type}{${p.citekey || 'key'},\n${fields.join(',\n')}\n}`;
 }
-
+ 
 function formatAuthors(raw) {
   // "Smith, John and Doe, Jane" → proper BibTeX author string
   return (raw||'').replace(/\s+and\s+/gi, ' and ');
 }
-
+ 
 /* ── SHOW BIBTEX ── */
 function showBibtex(id) {
   const p = papers.find(x => x.id === id);
@@ -1347,11 +1396,11 @@ function showBibtex(id) {
   document.getElementById('bibtex-content').textContent = bib;
   openModal('bibtex-modal');
 }
-
+ 
 function copyBibtex() {
   navigator.clipboard.writeText(currentBibtex).then(() => toast('Copied to clipboard!', 'success'));
 }
-
+ 
 /* ── EXPORT ALL .bib ── */
 function exportAllBib() {
   const all = papers.map(generateBibtex).join('\n\n');
@@ -1362,7 +1411,7 @@ function exportAllBib() {
   a.click();
   toast('Exported literature_review.bib', 'success');
 }
-
+ 
 /* ── SETTINGS ── */
 function openSettings() {
   document.getElementById('s-owner').value = githubConfig.owner || '';
@@ -1372,7 +1421,7 @@ function openSettings() {
   document.getElementById('s-token').value = githubConfig.token || '';
   openModal('settings-modal');
 }
-
+ 
 async function saveSettings() {
   const cfg = {
     owner: document.getElementById('s-owner').value.trim(),
@@ -1387,10 +1436,12 @@ async function saveSettings() {
     await loadFromGitHub();
     renderTable();
     renderYearFilter();
+    renderAuthorFilter();
+    renderKeywordFilter();
     toast('Reconnected!', 'success');
   }
 }
-
+ 
 function clearAllLocal() {
   if (confirm('Clear local cache? (GitHub data is unaffected)')) {
     localStorage.removeItem('litreview_config');
@@ -1398,15 +1449,15 @@ function clearAllLocal() {
     location.reload();
   }
 }
-
+ 
 /* ── MODAL HELPERS ── */
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
+ 
 document.querySelectorAll('.modal-overlay').forEach(el => {
   el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
 });
-
+ 
 /* ── TOAST ── */
 function toast(msg, type='info') {
   const el = document.createElement('div');
@@ -1416,26 +1467,26 @@ function toast(msg, type='info') {
   document.getElementById('toast-container').appendChild(el);
   setTimeout(() => el.remove(), 3500);
 }
-
+ 
 /* ── HELPERS ── */
 function escHtml(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
+ 
 function shortenAuthors(s) {
   if (!s) return '';
   const parts = s.split(' and ');
   if (parts.length <= 2) return s;
   return parts[0].split(',')[0] + ' et al.';
 }
-
+ 
 function formatDate(iso) {
   if (!iso) return '';
   const [y,m,d] = iso.split('-');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return `${d} ${months[+m-1]} ${y}`;
 }
-
+ 
 /* ── INIT ── */
 loadConfig();
 if (githubConfig.token && githubConfig.owner && githubConfig.repo) {
