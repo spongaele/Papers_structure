@@ -19,5 +19,26 @@
     "abstract": "We present a model in which an asset bubble can persist despite the presence of rational arbitrageurs.",
     "notes": "",
     "updated": "2026-05-04T12:22:18.107Z"
+  },
+  {
+    "id": "mor78t5cisy3",
+    "citekey": "blanchardjolivier1982bubbles",
+    "title": "Bubbles, rational expectations and financial markets",
+    "authors": "Blanchard J. Olivier",
+    "year": 1982,
+    "type": "article",
+    "journal": "NBER",
+    "publisher": "NBER",
+    "volume": "",
+    "number": "",
+    "pages": "",
+    "doi": "",
+    "pdf": "https://github.com/spongaele/Asset-bubbles/blob/main/01_literature/asset_pricing_bubbles/Blanchard%2C%20Watson%20(1982)_Bubbles%2C%20Rational%20Expectations%20and%20Financial%20Markets.pdf",
+    "url": "",
+    "accessed": "2026-05-04",
+    "keywords": "bubbles, expectations",
+    "abstract": "Nature and presence of bubbles in financial markets.",
+    "notes": "Very relevant and interesting if we write the paper using bubbles.",
+    "updated": "2026-05-04T12:52:21.264Z"
   }
 ]
