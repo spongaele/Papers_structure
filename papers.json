@@ -83,5 +83,36 @@
     "abstract": "This paper studies the dynamics and geography of investments made by international mutual funds located in advanced markets. I identify precise global and regional dynamics in equity and bond flows. Very few countries receive (or lose) funding in isolation. I also find strong evidence of global contagion: when financial conditions in developed markets change, emerging markets' funding is heavily affected. I illustrate this finding by deriving contagion maps showing where contagion spreads and with what intensity. In general, the results suggest that push effects from advanced market investors affect massively developing countries and expose them to sudden stops and surges.",
     "notes": "Key question: Do international investors propagate shocks and to whom?\nVery relevant for our work; strange dataset; geographically focused",
     "updated": "2026-05-05T14:52:03.155Z"
+  },
+  {
+    "id": "mosr13tcu08h",
+    "citekey": "canedese2016what",
+    "title": "What moves international stock and bond markets?",
+    "authorsArr": [
+      {
+        "last": "Canedese",
+        "first": "Gino"
+      },
+      {
+        "last": "Mallucci",
+        "first": "Enrico"
+      }
+    ],
+    "authors": "Canedese, Gino and Mallucci, Enrico",
+    "year": 2016,
+    "type": "article",
+    "journal": "Journal of International Money and Finance",
+    "publisher": "Elsevier",
+    "volume": "60",
+    "number": "",
+    "pages": "94-113",
+    "doi": "10.1016/j.jimonfin.2015.05.001",
+    "pdf": "",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0261560615000777",
+    "accessed": "2026-05-05",
+    "keywords": "stock markets, bond markets, flows, cash flows, news",
+    "abstract": "We study the relation between international mutual fund flows and the different return components of aggregate equity and bond markets. First, we decompose international equity and bond market returns into changes in expectations of future real cash payments, interest rates, exchange rates, and discount rates. News about future cash flows, rather than discount rates, is the main driver of international stock returns. This evidence is in contrast with the typical results reported only for the US. Inflation news instead is the main driver of international bond returns. Next, we turn to the interaction between these return components and international portfolio flows. We find evidence consistent with price pressure, short-term trend chasing, and short-run overreaction in the equity market. We also find that international bond flows to emerging markets are more sensitive to interest rate shocks than equity flows.",
+    "notes": "",
+    "updated": "2026-05-05T14:54:00.336Z"
   }
 ]
