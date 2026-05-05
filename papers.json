@@ -56,5 +56,32 @@
     "abstract": "Nature and presence of bubbles in financial markets.",
     "notes": "Very relevant and interesting if we write the paper using bubbles.",
     "updated": "2026-05-04T15:31:02.368Z"
+  },
+  {
+    "id": "mosqylebvphy",
+    "citekey": "damien2016mutual",
+    "title": "Mutual fund flows and the geography of contagion",
+    "authorsArr": [
+      {
+        "last": "Damien",
+        "first": "Puy"
+      }
+    ],
+    "authors": "Damien, Puy",
+    "year": 2016,
+    "type": "article",
+    "journal": "Journal of International Money and Finance",
+    "publisher": "Elsevier",
+    "volume": "60",
+    "number": "",
+    "pages": "73-93",
+    "doi": "10.1016/j.jimonfin.2015.06.014",
+    "pdf": "",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0261560615001151",
+    "accessed": "2026-05-05",
+    "keywords": "mutual funds, fund flows, geography, contagion, emergin markets, advanced markets",
+    "abstract": "This paper studies the dynamics and geography of investments made by international mutual funds located in advanced markets. I identify precise global and regional dynamics in equity and bond flows. Very few countries receive (or lose) funding in isolation. I also find strong evidence of global contagion: when financial conditions in developed markets change, emerging markets' funding is heavily affected. I illustrate this finding by deriving contagion maps showing where contagion spreads and with what intensity. In general, the results suggest that push effects from advanced market investors affect massively developing countries and expose them to sudden stops and surges.",
+    "notes": "Key question: Do international investors propagate shocks and to whom?\nVery relevant for our work; strange dataset; geographically focused",
+    "updated": "2026-05-05T14:52:03.155Z"
   }
 ]
