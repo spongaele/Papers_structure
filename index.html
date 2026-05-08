@@ -11,22 +11,22 @@
   /* ── RESET & BASE ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg:        #f5f2ee;
-    --bg2:       #ffffff;
-    --bg3:       #ede9e3;
-    --border:    rgba(0,0,0,0.08);
-    --border2:   rgba(0,0,0,0.14);
-    --text:      #2a2420;
-    --text-muted:#8a7e74;
-    --accent:    #a0722a;
-    --accent2:   #c08a3a;
-    --danger:    #b03030;
-    --success:   #3a8050;
-    --info:      #3a6ea0;
+:root {
+    --bg:        #111318;
+    --bg2:       #191c24;
+    --bg3:       #21252f;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.13);
+    --text:      #e8e2d6;
+    --text-muted:#8a8070;
+    --accent:    #c89b50;
+    --accent2:   #e4b96a;
+    --danger:    #c05050;
+    --success:   #5a9e6f;
+    --info:      #5a8ec0;
     --radius:    10px;
     --radius-lg: 16px;
-    --shadow:    0 4px 24px rgba(0,0,0,0.08);
+    --shadow:    0 4px 24px rgba(0,0,0,0.5);
   }
 
   html { scroll-behavior: smooth; }
@@ -441,6 +441,86 @@
   }
   .btn-bib:hover { background: rgba(90,158,111,0.28); }
 
+  /* ── LOCK SCREEN ── */
+  #lock-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 64px);
+    padding: 2rem;
+  }
+
+  .lock-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .lock-icon {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .lock-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .lock-card p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-bottom: 1.8rem;
+    line-height: 1.6;
+  }
+
+  .lock-card .form-group {
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+
+  .lock-error {
+    color: var(--danger);
+    font-size: 0.82rem;
+    margin-top: 0.75rem;
+    min-height: 1.2em;
+  }
+
+  .lock-hint {
+    margin-top: 1.2rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .lock-hint code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(200,155,80,0.1);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--accent);
+  }
+
+  .btn-lock-header {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    font-size: 0.78rem;
+    font-family: 'Source Serif 4', serif;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .btn-lock-header:hover { background: var(--bg3); color: var(--danger); border-color: rgba(192,80,80,0.3); }
+
   .author-row {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
@@ -691,11 +771,87 @@
     </div>
     <button class="btn btn-ghost btn-sm" id="export-bib-btn" style="display:none" onclick="exportAllBib()">⬇ Export .bib</button>
     <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Settings</button>
+    <button class="btn-lock-header" id="lock-btn" style="display:none" onclick="lockApp()" title="Lock and clear session">🔒 Lock</button>
   </div>
 </header>
 
+<!-- LOCK SCREEN -->
+<div id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-icon">🔐</div>
+    <h2 id="lock-title">LitReview</h2>
+    <p id="lock-subtitle">Enter your password to access the literature review.</p>
+    <div class="form-group">
+      <label id="lock-pwd-label">Password <span class="req">*</span></label>
+      <input type="password" id="lock-password" placeholder="Password…"
+        onkeydown="if(event.key==='Enter') unlockApp()"/>
+    </div>
+    <div class="form-group" id="lock-confirm-group" style="display:none">
+      <label>Confirm password <span class="req">*</span></label>
+      <input type="password" id="lock-confirm" placeholder="Repeat password…"/>
+    </div>
+    <div id="lock-sq-group" style="display:none">
+      <div class="form-group" style="margin-top:0.5rem">
+        <label>Security question <span class="req">*</span>
+          <small style="font-weight:300;text-transform:none;letter-spacing:0"> — shown if you ever need to reset</small>
+        </label>
+        <input type="text" id="lock-sq-question" placeholder="e.g. Name of your first pet?"/>
+      </div>
+      <div class="form-group">
+        <label>Answer <span class="req">*</span>
+          <small style="font-weight:300;text-transform:none;letter-spacing:0"> — case-insensitive</small>
+        </label>
+        <input type="text" id="lock-sq-answer" placeholder="Your answer…"/>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:0.75rem" onclick="unlockApp()">
+      <span id="lock-btn-label">Unlock →</span>
+    </button>
+    <div class="lock-error" id="lock-error"></div>
+    <div class="lock-hint" id="lock-hint"></div>
+  </div>
+</div>
+
+<!-- RESET MODAL -->
+<div class="modal-overlay" id="reset-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h2>Reset access</h2>
+      <button class="btn-icon" onclick="closeModal('reset-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:1.25rem;line-height:1.6">
+        Answer your security question correctly to reset local access.<br>
+        <strong>Your data on GitHub is never deleted.</strong>
+      </p>
+      <div class="form-group" style="margin-bottom:1rem">
+        <label>Your security question</label>
+        <div id="reset-question-display" style="
+          padding:10px 13px;
+          background:var(--bg3);
+          border:1px solid var(--border2);
+          border-radius:var(--radius);
+          font-size:0.9rem;
+          color:var(--text);
+          font-style:italic;
+        ">—</div>
+      </div>
+      <div class="form-group">
+        <label>Your answer <span class="req">*</span></label>
+        <input type="text" id="reset-answer-input" placeholder="Type your answer…"
+          onkeydown="if(event.key==='Enter') confirmReset()"/>
+      </div>
+      <div class="lock-error" id="reset-error" style="margin-top:0.5rem"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('reset-modal')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmReset()">Reset & clear local data</button>
+    </div>
+  </div>
+</div>
+
 <!-- SETUP SCREEN -->
-<div id="setup-screen">
+<div id="setup-screen" style="display:none">
   <div class="setup-card">
     <h2>Connect to GitHub</h2>
     <p>LitReview stores your papers in a JSON file inside a GitHub repository, enabling real-time collaboration with your colleagues.</p>
@@ -965,13 +1121,57 @@
         </div>
       </div>
       <div class="settings-section">
-        <h3>Danger Zone</h3>
+        <h3>Password</h3>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Current password</label>
+            <input type="password" id="s-pwd-current" placeholder="Current password…"/>
+          </div>
+          <div class="form-group">
+            <label>New password</label>
+            <input type="password" id="s-pwd-new" placeholder="New password…"/>
+          </div>
+          <div class="form-group">
+            <label>Confirm new password</label>
+            <input type="password" id="s-pwd-confirm" placeholder="Repeat new password…"/>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="changePassword()">🔑 Change password</button>
+        <div style="margin-top:0.6rem;font-size:0.78rem;color:var(--text-muted)">After changing, all collaborators must use the new password. Re-save any paper to re-encrypt with the new key.</div>
+      </div>
+      <div class="settings-section">
         <button class="btn btn-danger btn-sm" onclick="clearAllLocal()">🗑 Clear local cache</button>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('settings-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveSettings()">Save & Reconnect</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITY QUESTION MODAL -->
+<div class="modal-overlay" id="security-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h2>🔐 Domanda di sicurezza</h2>
+      <button class="btn-icon" onclick="closeModal('security-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:1.2rem;color:var(--text-muted);font-size:0.9rem;line-height:1.6">
+        Per resettare la password devi rispondere correttamente alla domanda di sicurezza.
+      </p>
+      <div class="form-group">
+        <label>Miglior gatto del mondo?</label>
+        <input type="text" id="security-answer" placeholder="La tua risposta…"
+          onkeydown="if(event.key==='Enter') confirmReset()"
+          autocomplete="off"/>
+      </div>
+      <div class="lock-error" id="security-error"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('security-modal')">Annulla</button>
+      <button class="btn btn-danger" onclick="confirmReset()">Conferma reset</button>
     </div>
   </div>
 </div>
@@ -992,6 +1192,301 @@ let currentBibtex = '';
 let githubConfig = {};
 let fileSha = null; // needed for GitHub API PUT
 let localMode = false;
+let cryptoKey = null;  // AES-GCM key, lives only in memory
+
+/* ══════════════════════════════════════════
+   CRYPTO ENGINE  (AES-256-GCM + PBKDF2)
+   ══════════════════════════════════════════
+   - Password never stored, only the derived CryptoKey in memory
+   - Salt = SHA-256 of (owner/repo) → deterministic, same for all collaborators
+   - papers.json on GitHub = {"v":1,"salt":"hex","iv":"hex","data":"hex"}
+   - Plain [] treated as unencrypted legacy data (migrated on first save)
+*/
+
+async function sha256hex(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function deriveKey(password, saltHex) {
+  const saltBytes = hexToBytes(saltHex);
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(password),
+    'PBKDF2', false, ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt:saltBytes, iterations:200000, hash:'SHA-256' },
+    keyMaterial,
+    { name:'AES-GCM', length:256 },
+    false,
+    ['encrypt','decrypt']
+  );
+}
+
+async function encryptData(plaintext) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encoded = new TextEncoder().encode(plaintext);
+  const cipherBuf = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, cryptoKey, encoded);
+  return {
+    v: 1,
+    salt: await getSalt(),
+    iv: bytesToHex(iv),
+    data: bytesToHex(new Uint8Array(cipherBuf))
+  };
+}
+
+async function decryptData(blob) {
+  if (!blob || !blob.iv || !blob.data) throw new Error('Invalid encrypted blob');
+  const iv = hexToBytes(blob.iv);
+  const data = hexToBytes(blob.data);
+  const plainBuf = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, cryptoKey, data);
+  return new TextDecoder().decode(plainBuf);
+}
+
+async function getSalt() {
+  const id = localMode ? 'local' : `${githubConfig.owner}/${githubConfig.repo}`;
+  return sha256hex(id);
+}
+
+function bytesToHex(bytes) {
+  return Array.from(bytes).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function hexToBytes(hex) {
+  const arr = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < arr.length; i++) arr[i] = parseInt(hex.slice(i*2,i*2+2), 16);
+  return arr;
+}
+
+/* ── VERIFIER HELPERS ── */
+// The verifier is an AES-GCM encryption of a known sentinel string,
+// using a fixed salt (not repo-specific). It proves the user knows the
+// correct password without storing the password itself anywhere.
+
+const VERIFIER_SALT_STR = 'litreview-verifier-salt-v1';
+const VERIFIER_SENTINEL  = 'litreview-password-ok-v1';
+const VERIFIER_KEY       = 'litreview_verifier';
+const SQ_KEY             = 'litreview_sq';        // {question, answerHash}
+const SQ_HASH_SALT       = 'litreview-sq-salt-v1';
+
+async function getVerifierSalt() {
+  return sha256hex(VERIFIER_SALT_STR);
+}
+
+async function createVerifier(password) {
+  const salt = await getVerifierSalt();
+  const vKey = await deriveKey(password, salt);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encoded = new TextEncoder().encode(VERIFIER_SENTINEL);
+  const cipherBuf = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, vKey, encoded);
+  return { iv: bytesToHex(iv), data: bytesToHex(new Uint8Array(cipherBuf)) };
+}
+
+async function checkVerifier(password) {
+  const stored = localStorage.getItem(VERIFIER_KEY);
+  if (!stored) return null; // no verifier set yet
+  const blob = JSON.parse(stored);
+  const salt = await getVerifierSalt();
+  const vKey = await deriveKey(password, salt);
+  try {
+    const iv = hexToBytes(blob.iv);
+    const data = hexToBytes(blob.data);
+    const plain = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, vKey, data);
+    return new TextDecoder().decode(plain) === VERIFIER_SENTINEL;
+  } catch {
+    return false;
+  }
+}
+
+/* ── SECURITY QUESTION HELPERS ── */
+function normalizeSqAnswer(answer) {
+  return answer.trim().toLowerCase();
+}
+
+async function hashSqAnswer(answer) {
+  const normalized = normalizeSqAnswer(answer);
+  return sha256hex(SQ_HASH_SALT + normalized);
+}
+
+async function saveSq(question, answer) {
+  const answerHash = await hashSqAnswer(answer);
+  localStorage.setItem(SQ_KEY, JSON.stringify({ question, answerHash }));
+}
+
+async function checkSqAnswer(answer) {
+  const stored = localStorage.getItem(SQ_KEY);
+  if (!stored) return false;
+  const { answerHash } = JSON.parse(stored);
+  const incoming = await hashSqAnswer(answer);
+  return incoming === answerHash;
+}
+
+function getSqQuestion() {
+  const stored = localStorage.getItem(SQ_KEY);
+  if (!stored) return null;
+  return JSON.parse(stored).question || null;
+}
+
+/* ── LOCK SCREEN UI STATE ── */
+function initLockScreen() {
+  const hasVerifier = !!localStorage.getItem(VERIFIER_KEY);
+  const confirmGroup = document.getElementById('lock-confirm-group');
+  const sqGroup      = document.getElementById('lock-sq-group');
+  const title        = document.getElementById('lock-title');
+  const subtitle     = document.getElementById('lock-subtitle');
+  const btnLabel     = document.getElementById('lock-btn-label');
+  const hint         = document.getElementById('lock-hint');
+
+  if (hasVerifier) {
+    confirmGroup.style.display = 'none';
+    sqGroup.style.display = 'none';
+    title.textContent = 'Welcome back';
+    subtitle.textContent = 'Enter your password to unlock your literature review.';
+    btnLabel.textContent = 'Unlock →';
+    hint.innerHTML = `Forgot your password? <a href="#" onclick="openResetModal()" style="color:var(--accent)">Reset via security question</a>`;
+  } else {
+    confirmGroup.style.display = 'flex';
+    sqGroup.style.display = 'block';
+    title.textContent = 'Set your password';
+    subtitle.textContent = 'First time setup — choose a password and a security question. Both collaborators must use the same password.';
+    btnLabel.textContent = 'Set password & continue →';
+    hint.innerHTML = `The password is <strong>never stored</strong> — only a cryptographic verifier is kept locally.<br>Share the password with your collaborator via a secure channel (Signal, WhatsApp…).<br><br>Your <code>papers.json</code> on GitHub will be encrypted with <strong>AES-256-GCM</strong>.`;
+  }
+}
+
+/* ── LOCK / UNLOCK ── */
+async function unlockApp() {
+  const pwd = document.getElementById('lock-password').value;
+  const errEl = document.getElementById('lock-error');
+  errEl.textContent = '';
+
+  if (!pwd || pwd.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.'; return;
+  }
+
+  const hasVerifier = !!localStorage.getItem(VERIFIER_KEY);
+
+  if (!hasVerifier) {
+    // ── FIRST TIME: set password + security question ──
+    const confirm = document.getElementById('lock-confirm').value;
+    const question = document.getElementById('lock-sq-question').value.trim();
+    const answer   = document.getElementById('lock-sq-answer').value.trim();
+
+    if (pwd !== confirm) {
+      errEl.textContent = 'Passwords do not match.'; return;
+    }
+    if (!question) {
+      errEl.textContent = 'Please enter a security question.'; return;
+    }
+    if (!answer) {
+      errEl.textContent = 'Please enter an answer to your security question.'; return;
+    }
+
+    // Save verifier and security question
+    const verifier = await createVerifier(pwd);
+    localStorage.setItem(VERIFIER_KEY, JSON.stringify(verifier));
+    await saveSq(question, answer);
+    toast('Password and security question set!', 'success');
+  } else {
+    // ── RETURNING: verify password ──
+    const ok = await checkVerifier(pwd);
+    if (!ok) {
+      errEl.textContent = 'Wrong password. Try again.'; return;
+    }
+  }
+
+  // Derive the repo-specific encryption key
+  const saltId = (githubConfig.owner && githubConfig.repo)
+    ? `${githubConfig.owner}/${githubConfig.repo}`
+    : 'pending';
+  const salt = await sha256hex(saltId);
+  cryptoKey = await deriveKey(pwd, salt);
+
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('lock-btn').style.display = 'inline-flex';
+
+  if (githubConfig.token && githubConfig.owner && githubConfig.repo) {
+    const correctSalt = await getSalt();
+    cryptoKey = await deriveKey(pwd, correctSalt);
+    const ok = await loadFromGitHub();
+    if (ok) showApp();
+    else document.getElementById('setup-screen').style.display = 'flex';
+  } else if (localMode) {
+    showApp();
+  } else {
+    document.getElementById('setup-screen').style.display = 'flex';
+  }
+}
+
+function lockApp() {
+  cryptoKey = null;
+  papers = [];
+  fileSha = null;
+  document.getElementById('app-main').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('lock-screen').style.display = 'flex';
+  document.getElementById('lock-password').value = '';
+  document.getElementById('lock-confirm').value = '';
+  document.getElementById('lock-error').textContent = '';
+  document.getElementById('lock-btn').style.display = 'none';
+  document.getElementById('export-bib-btn').style.display = 'none';
+  setSyncStatus('', 'Not connected');
+  initLockScreen();
+  toast('Session locked.', 'info');
+  document.getElementById('lock-password').focus();
+}
+
+function resetPassword() {
+  document.getElementById('security-answer').value = '';
+  document.getElementById('security-error').textContent = '';
+  openModal('security-modal');
+  setTimeout(() => document.getElementById('security-answer').focus(), 100);
+}
+
+function confirmReset() {
+  const answer = document.getElementById('security-answer').value.trim().toLowerCase();
+  const correct = 'peppone pasticcione';
+  if (answer !== correct) {
+    document.getElementById('security-error').textContent = 'Risposta non corretta. Riprova.';
+    return;
+  }
+  closeModal('security-modal');
+  localStorage.removeItem(VERIFIER_KEY);
+  localStorage.removeItem('litreview_config');
+  localStorage.removeItem('litreview_papers');
+  location.reload();
+}
+
+/* ── CHANGE PASSWORD (from settings) ── */
+async function changePassword() {
+  const current = document.getElementById('s-pwd-current').value;
+  const newPwd  = document.getElementById('s-pwd-new').value;
+  const confirm = document.getElementById('s-pwd-confirm').value;
+
+  if (!current || !newPwd || !confirm) { toast('Fill in all three password fields.', 'error'); return; }
+  if (newPwd.length < 6) { toast('New password must be at least 6 characters.', 'error'); return; }
+  if (newPwd !== confirm) { toast('New passwords do not match.', 'error'); return; }
+
+  // Verify current password
+  const ok = await checkVerifier(current);
+  if (!ok) { toast('Current password is wrong.', 'error'); return; }
+
+  // Create new verifier
+  const verifier = await createVerifier(newPwd);
+  localStorage.setItem(VERIFIER_KEY, JSON.stringify(verifier));
+
+  // Update in-memory crypto key with new password
+  const salt = await getSalt();
+  cryptoKey = await deriveKey(newPwd, salt);
+
+  // Clear fields
+  document.getElementById('s-pwd-current').value = '';
+  document.getElementById('s-pwd-new').value = '';
+  document.getElementById('s-pwd-confirm').value = '';
+
+  closeModal('settings-modal');
+  toast('Password changed! Re-save a paper to re-encrypt with the new key.', 'success');
+}
 
 /* ── LOAD CONFIG FROM LOCALSTORAGE ── */
 function loadConfig() {
@@ -1029,8 +1524,34 @@ async function loadFromGitHub() {
   try {
     const data = await ghFetch();
     fileSha = data.sha;
-    const content = atob(data.content.replace(/\n/g, ''));
-    papers = JSON.parse(content);
+    const raw = atob(data.content.replace(/\n/g, ''));
+    const parsed = JSON.parse(raw);
+
+    if (Array.isArray(parsed)) {
+      // Legacy unencrypted format — migrate on next save
+      papers = parsed;
+      toast('⚠ Data not encrypted yet — will be encrypted on next save.', 'info');
+    } else if (parsed.v === 1 && parsed.data) {
+      // Encrypted blob
+      try {
+        // Re-derive key with correct repo salt
+        const pwd = document.getElementById('lock-password').value;
+        const salt = await getSalt();
+        cryptoKey = await deriveKey(pwd, salt);
+        const plaintext = await decryptData(parsed);
+        papers = JSON.parse(plaintext);
+      } catch(e) {
+        setSyncStatus('error', 'Wrong password');
+        document.getElementById('lock-error').textContent = 'Wrong password or corrupted data.';
+        document.getElementById('lock-screen').style.display = 'flex';
+        document.getElementById('setup-screen').style.display = 'none';
+        cryptoKey = null;
+        return false;
+      }
+    } else {
+      papers = [];
+    }
+
     setSyncStatus('ok', 'Synced');
     return true;
   } catch(e) {
@@ -1042,9 +1563,12 @@ async function loadFromGitHub() {
 
 async function saveToGitHub() {
   if (localMode) { saveLocal(); return; }
+  if (!cryptoKey) { toast('Session not unlocked.', 'error'); return; }
   setSyncStatus('syncing', 'Saving…');
   try {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(papers, null, 2))));
+    const plaintext = JSON.stringify(papers, null, 2);
+    const blob = await encryptData(plaintext);
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(blob))));
     const body = {
       message: `Update papers.json [LitReview]`,
       content,
@@ -1085,6 +1609,10 @@ async function connectGitHub() {
   }
   saveConfig(cfg);
   localMode = false;
+  // Re-derive key with the now-known repo salt
+  const pwd = document.getElementById('lock-password').value;
+  const salt = await sha256hex(`${cfg.owner}/${cfg.repo}`);
+  cryptoKey = await deriveKey(pwd, salt);
   const ok = await loadFromGitHub();
   if (ok) showApp();
 }
@@ -1600,9 +2128,8 @@ function formatDate(iso) {
 
 /* ── INIT ── */
 loadConfig();
-if (githubConfig.token && githubConfig.owner && githubConfig.repo) {
-  loadFromGitHub().then(ok => { if (ok) showApp(); });
-}
+initLockScreen();
+document.getElementById('lock-password').focus();
 </script>
 </body>
 </html>
