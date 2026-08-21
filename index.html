@@ -1014,12 +1014,12 @@
     <select class="filter-select" id="type-filter" onchange="renderTable()">
       <option value="">All types</option>
       <option value="article">article</option>
-      <option value="inproceedings">inproceedings</option>
+      <option value="workingpaper">working paper</option>
       <option value="book">book</option>
-      <option value="incollection">incollection</option>
-      <option value="phdthesis">phdthesis</option>
-      <option value="techreport">bookchapter</option>
-      <option value="misc">misc</option>
+      <option value="bookchapter">book chapter</option>
+      <option value="report">report</option>
+      <option value="phdthesis">phd thesis</option>
+      <option value="presentation">presentation</option>
     </select>
     <select class="filter-select" id="year-filter" onchange="renderTable()">
       <option value="">All years</option>
@@ -1094,12 +1094,12 @@
           <label>Type <span class="req">*</span></label>
           <select id="f-type" onchange="toggleFields()">
             <option value="article">article</option>
-            <option value="inproceedings">inproceedings</option>
+            <option value="workingpaper">working paper</option>
             <option value="book">book</option>
-            <option value="incollection">incollection</option>
-            <option value="phdthesis">phdthesis</option>
-            <option value="techreport">techreport</option>
-            <option value="misc">misc</option>
+            <option value="bookchapter">book chapter</option>
+            <option value="report">report</option>
+            <option value="phdthesis">phd thesis</option>
+            <option value="presentation">presentation</option>
           </select>
         </div>
         <!-- Row 4 -->
@@ -2005,6 +2005,7 @@ function openAddPaper() {
   clearPaperForm();
   document.getElementById('f-accessed').value = new Date().toISOString().split('T')[0];
   populateAuthorWidget([]);
+  toggleFields();
   openModal('paper-modal');
 }
 
@@ -2035,6 +2036,7 @@ function editPaper(id) {
     ? p.authorsArr
     : parseAuthorsString(p.authors || '');
   populateAuthorWidget(authorsArr);
+  toggleFields();
   openModal('paper-modal');
 }
 
@@ -2111,9 +2113,12 @@ function clearPaperForm() {
 function toggleFields() {
   const type = document.getElementById('f-type').value;
   const jLabel = document.getElementById('journal-label');
-  if (['inproceedings','incollection'].includes(type)) jLabel.textContent = 'Booktitle';
+  if (type === 'bookchapter') jLabel.textContent = 'Booktitle';
   else if (type === 'phdthesis') jLabel.textContent = 'School';
-  else if (type === 'techreport') jLabel.textContent = 'Institution';
+  else if (type === 'workingpaper') jLabel.textContent = 'Series / Institution';
+  else if (type === 'report') jLabel.textContent = 'Institution';
+  else if (type === 'book') jLabel.textContent = 'Series';
+  else if (type === 'presentation') jLabel.textContent = 'Conference / Event';
   else jLabel.textContent = 'Journal';
 }
 
@@ -2126,29 +2131,45 @@ function generateBibtex(p) {
   if (p.year) add('year', String(p.year));
 
   const type = p.type || 'misc';
-  if (['article'].includes(type)) {
+  let bibType = 'misc';
+
+  if (type === 'article') {
+    bibType = 'article';
     add('journal', p.journal);
     add('volume', p.volume);
     add('number', p.number);
-  } else if (['inproceedings','incollection'].includes(type)) {
-    add('booktitle', p.journal);
-  } else if (type === 'book') {
-    add('publisher', p.publisher);
-  } else if (type === 'phdthesis') {
-    add('school', p.journal || p.publisher);
-  } else if (type === 'techreport') {
+  } else if (type === 'workingpaper') {
+    bibType = 'techreport';
     add('institution', p.journal || p.publisher);
     add('number', p.number);
+    add('type', 'Working Paper');
+  } else if (type === 'book') {
+    bibType = 'book';
+    add('publisher', p.publisher);
+    add('series', p.journal);
+  } else if (type === 'bookchapter') {
+    bibType = 'incollection';
+    add('booktitle', p.journal);
+    add('publisher', p.publisher);
+  } else if (type === 'report') {
+    bibType = 'techreport';
+    add('institution', p.journal || p.publisher);
+    add('number', p.number);
+  } else if (type === 'phdthesis') {
+    bibType = 'phdthesis';
+    add('school', p.journal || p.publisher);
+  } else if (type === 'presentation') {
+    bibType = 'misc';
+    add('howpublished', p.journal || 'Presentation');
   }
 
   add('pages', p.pages);
-  add('publisher', ['article','inproceedings','incollection'].includes(type) ? null : p.publisher);
   if (p.doi) add('doi', p.doi);
   if (p.url) add('url', p.url);
   if (p.accessed) add('note', `Accessed: ${formatDate(p.accessed)}`);
   if (p.keywords) add('keywords', p.keywords);
 
-  return `@${type}{${p.citekey || 'key'},\n${fields.join(',\n')}\n}`;
+  return `@${bibType}{${p.citekey || 'key'},\n${fields.join(',\n')}\n}`;
 }
 
 function formatAuthors(raw) {
